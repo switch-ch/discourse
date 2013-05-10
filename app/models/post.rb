@@ -110,19 +110,24 @@ class Post < ActiveRecord::Base
     end.count
   end
 
-  def link_count
-    return 0 unless raw.present?
+  def raw_links
+    return [] unless raw.present?
 
     # Don't include @mentions in the link count
-    total = 0
+    links = []
     cooked_document.search("a[href]").each do |l|
       html_class = l.attributes['class']
+      url = l.attributes['href'].to_s
       if html_class.present?
         next if html_class.to_s == 'mention' && l.attributes['href'].to_s =~ /^\/users\//
       end
-      total +=1
+      links << url
     end
-    total
+    links
+  end
+
+  def link_count
+    raw_links.size
   end
 
   # Sometimes the post is being edited by someone else, for example, a mod.
@@ -152,6 +157,33 @@ class Post < ActiveRecord::Base
   def max_links_validator
     return if acting_user.present? && acting_user.has_trust_level?(:basic)
     errors.add(:base, I18n.t(:too_many_links, count: SiteSetting.newuser_max_links)) if link_count > SiteSetting.newuser_max_links
+  end
+
+
+  def linked_hosts
+    return nil if raw_links.blank?
+
+    hosts = {}
+    raw_links.each do |u|
+      uri = URI.parse(u)
+      host = uri.host
+      hosts[host] = (hosts[host] || 0) + 1
+    end
+    hosts
+
+  end
+
+  def max_host_links_newuser
+    return if acting_user.present? && acting_user.has_trust_level?(:basic)
+
+    hosts = linked_hosts
+    return if hosts.blank?
+
+    # Count hosts in previous posts the user has made, PLUS these new ones
+    TopicLink.where(domain: hosts.keys, user_id: acting_user.id).each do |tl|
+      hosts[tl.domain] = (hosts[tl.domain] || 0) + 1
+    end
+
   end
 
 
