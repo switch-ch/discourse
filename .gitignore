@@ -61,6 +61,8 @@ sublime-project.sublime-workspace
 config/multisite.yml
 # don't check in my renamed multisite config as well :)
 config/multisite1.yml
+# and don't check in anothter multisite copy neither
+config/multisite_with_templateDB.yml
 config/fog_credentials.yml
 
 /public/uploads
