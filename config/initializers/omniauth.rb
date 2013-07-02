@@ -6,6 +6,20 @@ require 'openid_redis_store'
 
 Rails.application.config.middleware.use OmniAuth::Builder do
 
+  provider  :aai,{
+              :uid_field => :'persistent-id',
+              :fields => [:name, :email, :swiss_ep_uid],
+              :extra_fields => [:'Shib-Authentication-Instant']# See lib/omniauth/strategies/aai.rb for full list.
+            }
+
+  if Rails.env.development?
+    provider :developer, {
+      :uid_field => :'persistent-id',
+      :fields => OmniAuth::Strategies::Aai::DEFAULT_FIELDS,
+      :extra_fields => OmniAuth::Strategies::Aai::DEFAULT_EXTRA_FIELDS
+    }
+  end
+
   provider :open_id,
            :store => OpenID::Store::Redis.new($redis),
            :name => 'google',
@@ -18,8 +32,8 @@ Rails.application.config.middleware.use OmniAuth::Builder do
            :identifier => 'https://me.yahoo.com',
            :require => 'omniauth-openid'
 
-  # lambda is required for proper multisite support, 
-  #  without it subdomains will not function correctly 
+  # lambda is required for proper multisite support,
+  #  without it subdomains will not function correctly
   provider :facebook,
            :setup => lambda { |env|
               strategy = env['omniauth.strategy']

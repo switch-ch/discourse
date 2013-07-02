@@ -103,8 +103,20 @@ Discourse::Application.routes.draw do
   end
 
   resources :static
-  post 'login' => 'static#enter'
-  get 'login' => 'static#show', id: 'login'
+  # post 'login' => 'static#enter'
+  # get 'login' => 'static#show', id: 'login'
+
+  if Rails.env.development? or Rails.env.test? # provider: developer
+    get 'login', to: redirect('/auth/developer')
+    post '/auth/developer/callback', to: "session#create", as: 'auth_callback'
+    get '/auth/failure', to: 'session#failure', as: 'auth_failure'
+  else # provider: aai
+    get 'login', to: "session#login", as: 'login'
+    get '/auth/aai/callback', to: "session#create", as: 'auth_callback'
+    get '/auth/failure', to: 'session#failure', as: 'auth_failure'
+  end
+  get 'logout',  to: 'session#destroy', as: 'logout'
+
   get 'faq' => 'static#show', id: 'faq'
   get 'tos' => 'static#show', id: 'tos'
   get 'privacy' => 'static#show', id: 'privacy'
