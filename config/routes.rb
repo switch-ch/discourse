@@ -104,18 +104,12 @@ Discourse::Application.routes.draw do
 
   resources :static
 
-  get 'login', to: redirect "https://discourse.test.toolbox.switch.ch/spunten"
+  # TODO - This should be dynamic using the env and the groupname
+  # get 'login', to: redirect("https://discourse.test.toolbox.switch.ch/spunten")
+  get 'login', to: redirect('/auth/aai')
+
   # post 'login' => 'static#enter'
   # get 'login' => 'static#show', id: 'login'
-  # if Rails.env.development? or Rails.env.test? # provider: developer
-  #   get 'login', to: redirect('/auth/developer')
-  #   post '/auth/developer/callback', to: "session#create", as: 'auth_callback'
-  #   get '/auth/failure', to: 'session#failure', as: 'auth_failure'
-  # else # provider: aai
-  #   get 'login', to: "session#login", as: 'login'
-  #   get '/auth/aai/callback', to: "session#create", as: 'auth_callback'
-  #   get '/auth/failure', to: 'session#failure', as: 'auth_failure'
-  # end
   get 'logout',  to: 'session#destroy', as: 'logout'
 
   get 'faq' => 'static#show', id: 'faq'
