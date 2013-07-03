@@ -45,7 +45,55 @@ class Users::OmniauthCallbacksController < ApplicationController
   def create_or_sign_on_user_using_aai(auth_token)
     data_info = auth_token[:info]
     data_extra = auth_token[:extra]
-    logger.info "Provider: #{auth_token.inspect}"
+    persistent_id = auth_token.uid
+    unique_id = data_info.swiss_ep_uid
+    given_name = data_extra.first_name
+    surname = data_extra.surname
+    email = data_info.email
+    home_organization = data_extra.homeOrganization
+
+    # If the auth supplies a name / username, use those. Otherwise start with email.
+    name = data_info.name || email
+    username = email
+
+    aai_user = AaiUserInfo.where(unique_id: unique_id).first
+
+    ## Maybe we could use this to update changed unique_ids
+    # if aai_user.blank? && user = User.find_by_email(email)
+    #   # we trust so do an email lookup
+    #   aai_user = AaiUserInfo.create(url: identity_url , user_id: user.id, email: email, active: true)
+    # end
+
+    authenticated = aai_user # if authed before
+
+    if authenticated
+      user = aai_user.user
+
+      # If we have to approve users
+      if Guardian.new(user).can_access_forum?
+        log_on_user(user)
+        @data = {authenticated: true}
+      else
+        @data = {awaiting_approval: true}
+      end
+
+    else
+      @data = {
+        email: email,
+        name: name,
+        username: UserNameSuggester.suggest(name),
+        email_valid: true ,
+        auth_provider: auth_token.provider || params[:provider]
+        # auth_provider: auth_token.provider || params[:provider].try(:capitalize)
+      }
+      session[:authentication] = {
+        email: @data[:email],
+        email_valid: @data[:email_valid],
+      }
+    end
+
+
+
   end
 
   def create_or_sign_on_user_using_twitter(auth_token)
