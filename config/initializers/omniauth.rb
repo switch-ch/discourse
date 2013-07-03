@@ -6,18 +6,24 @@ require 'openid_redis_store'
 
 Rails.application.config.middleware.use OmniAuth::Builder do
 
-  provider  :aai,{
-              :uid_field => :'persistent-id',
-              :fields => [:name, :email, :swiss_ep_uid],
-              :extra_fields => [:'Shib-Authentication-Instant']# See lib/omniauth/strategies/aai.rb for full list.
-            }
+  provider  :aai,
+            :require => 'omniauth-aai'
+  # provider  :aai,{
+  #             :uid_field => :'persistent-id',
+  #             :fields => [:name, :email, :swiss_ep_uid],
+  #             :extra_fields => [:'Shib-Authentication-Instant']# See lib/omniauth/strategies/aai.rb for full list.
+  #           },
+  #           :require => 'omniauth-aai'
 
   if Rails.env.development?
-    provider :developer, {
-      :uid_field => :'persistent-id',
-      :fields => OmniAuth::Strategies::Aai::DEFAULT_FIELDS,
-      :extra_fields => OmniAuth::Strategies::Aai::DEFAULT_EXTRA_FIELDS
-    }
+    provider  :developer,
+              :require => 'omniauth-aai'
+
+    # provider :developer, {
+    #   :uid_field => :'persistent-id',
+    #   :fields => OmniAuth::Strategies::Aai::DEFAULT_FIELDS,
+    #   :extra_fields => OmniAuth::Strategies::Aai::DEFAULT_EXTRA_FIELDS
+    # }
   end
 
   provider :open_id,
