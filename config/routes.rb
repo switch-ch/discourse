@@ -105,8 +105,8 @@ Discourse::Application.routes.draw do
   resources :static
 
   # TODO - This should be dynamic using the env and the groupname
-  # get 'login', to: redirect("https://discourse.test.toolbox.switch.ch/spunten")
-  get 'login', to: redirect('/auth/aai')
+  get 'login', to: redirect("https://discourse.test.toolbox.switch.ch/spunten")
+  # get 'login', to: redirect('/auth/aai')
 
   # post 'login' => 'static#enter'
   # get 'login' => 'static#show', id: 'login'
