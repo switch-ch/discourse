@@ -43,9 +43,9 @@ class Users::OmniauthCallbacksController < ApplicationController
   end
 
   def create_or_sign_on_user_using_aai(auth_token)
-    data = auth_token[:info]
-    persistent_id = data.persistent-id
-    logger.info "Provider: #{data.to_yaml}"
+    data_info = auth_token[:info]
+    data_extra = auth_token[:extra]
+    logger.info "Provider: #{auth_token.inspect}"
   end
 
   def create_or_sign_on_user_using_twitter(auth_token)
