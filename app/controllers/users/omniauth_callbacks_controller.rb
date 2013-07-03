@@ -58,7 +58,7 @@ class Users::OmniauthCallbacksController < ApplicationController
 
     aai_user = AaiUserInfo.where(unique_id: unique_id).first
 
-    if aai_user.blank? #&& user = User.find_by_email(email)
+    if aai_user.blank? && user = User.find_by_email(email)
       # we trust so do an email lookup
       aai_user = AaiUserInfo.create(user_id: user.id,
                                     persistent_id: persistent_id,
