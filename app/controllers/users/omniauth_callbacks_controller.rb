@@ -88,7 +88,7 @@ class Users::OmniauthCallbacksController < ApplicationController
         email: email,
         name: name,
         username: UserNameSuggester.suggest(name),
-        email_valid: true ,
+        email_valid: true,
         # auth_provider: auth_token.provider || params[:provider] || 'aai'
         auth_provider: auth_token.provider || params[:provider].try(:capitalize)
       }
