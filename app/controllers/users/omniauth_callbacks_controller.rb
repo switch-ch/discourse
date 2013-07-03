@@ -9,7 +9,7 @@ class Users::OmniauthCallbacksController < ApplicationController
   layout false
 
   def self.types
-    @types ||= Enum.new(:facebook, :twitter, :google, :yahoo, :github, :persona, :cas)
+    @types ||= Enum.new(:facebook, :twitter, :google, :yahoo, :github, :persona, :cas, :aai)
   end
 
   # need to be able to call this
@@ -40,6 +40,11 @@ class Users::OmniauthCallbacksController < ApplicationController
   def failure
     flash[:error] = I18n.t("login.omniauth_error", strategy: params[:strategy].titleize)
     render layout: 'no_js'
+  end
+
+  def create_or_sign_on_user_using_aai(auth_token)
+    data = auth_token[:info]
+    puts data.inspect
   end
 
   def create_or_sign_on_user_using_twitter(auth_token)
