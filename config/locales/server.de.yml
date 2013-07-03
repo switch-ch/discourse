@@ -513,6 +513,7 @@ de:
     enable_local_account_create: "Aktiviere lokale Kontoerstellung"
     enable_google_logins: "Aktiviere Google Authentisierung."
     enable_yahoo_logins: "Aktiviere Yahoo Authentisierung."
+    enable_aai_logins: "Aktiviere SWITCHaai Authentisierung."
 
     enable_twitter_logins: "Aktiviere Twitter Authentisierung (benötigt twitter_consumer_key und twitter_consumer_secret)."
     twitter_consumer_key: "Consumer Key für Twitter Authentisierung, registriert auf http://dev.twitter.com"
