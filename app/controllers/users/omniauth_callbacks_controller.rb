@@ -65,9 +65,9 @@ class Users::OmniauthCallbacksController < ApplicationController
     # end
 
     unless aai_user
-      # User.create!(username: UserNameSuggester.suggest(name), email: email)
+      User.create!(username: UserNameSuggester.suggest(name), email: email)
       # AaiUserInfo.create()
-      AaiUserInfo.create!(session[:authentication][:aai]
+      #AaiUserInfo.create!(session[:authentication][:aai])
     end
 
     authenticated = aai_user # if authed before
@@ -94,9 +94,9 @@ class Users::OmniauthCallbacksController < ApplicationController
       }
       session[:authentication] = {
         aai: {
-          unique_id: unique_id
+          unique_id: unique_id,
           persistent_id: persistent_id
-        }
+        },
         email: @data[:email],
         email_valid: @data[:email_valid],
       }
