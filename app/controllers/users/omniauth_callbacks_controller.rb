@@ -94,11 +94,11 @@ class Users::OmniauthCallbacksController < ApplicationController
       }
       session[:authentication] = {
         aai: {
-          unique_id: unique_id
+          unique_id: unique_id,
           persistent_id: persistent_id
-        }
+        },
         email: @data[:email],
-        email_valid: @data[:email_valid],
+        email_valid: @data[:email_valid]
       }
     end
 
