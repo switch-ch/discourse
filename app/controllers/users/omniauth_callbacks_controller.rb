@@ -58,17 +58,17 @@ class Users::OmniauthCallbacksController < ApplicationController
 
     aai_user = AaiUserInfo.where(unique_id: unique_id).first
 
-    ## Maybe we could use this to update changed unique_ids
-    # if aai_user.blank? && user = User.find_by_email(email)
-    #   # we trust so do an email lookup
-    #   aai_user = AaiUserInfo.create(url: identity_url , user_id: user.id, email: email, active: true)
-    # end
-
-    unless aai_user
-      User.create!(username: UserNameSuggester.suggest(name), email: email)
-      # AaiUserInfo.create()
-      #AaiUserInfo.create!(session[:authentication][:aai])
+    if aai_user.blank? && user = User.find_by_email(email)
+      # we trust so do an email lookup
+      aai_user = AaiUserInfo.create(user_id: user.id,
+                                    persistent_id: persistent_id,
+                                    unique_id: unique_id,
+                                    given_name: given_name,
+                                    surname: surname,
+                                    email: email,
+                                    home_organization: home_organization)
     end
+
 
     authenticated = aai_user # if authed before
 
@@ -89,14 +89,14 @@ class Users::OmniauthCallbacksController < ApplicationController
         name: name,
         username: UserNameSuggester.suggest(name),
         email_valid: true ,
-        auth_provider: auth_token.provider || params[:provider] || 'aai'
-        # auth_provider: auth_token.provider || params[:provider].try(:capitalize)
+        # auth_provider: auth_token.provider || params[:provider] || 'aai'
+        auth_provider: auth_token.provider || params[:provider].try(:capitalize)
       }
       session[:authentication] = {
         aai: {
-          unique_id: unique_id,
+          unique_id: unique_id
           persistent_id: persistent_id
-        },
+        }
         email: @data[:email],
         email_valid: @data[:email_valid],
       }
