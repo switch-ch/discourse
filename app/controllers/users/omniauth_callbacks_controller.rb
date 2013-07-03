@@ -64,6 +64,12 @@ class Users::OmniauthCallbacksController < ApplicationController
     #   aai_user = AaiUserInfo.create(url: identity_url , user_id: user.id, email: email, active: true)
     # end
 
+    unless aai_user
+      # User.create!(username: UserNameSuggester.suggest(name), email: email)
+      # AaiUserInfo.create()
+      AaiUserInfo.create!(session[:authentication][:aai]
+    end
+
     authenticated = aai_user # if authed before
 
     if authenticated
@@ -83,16 +89,18 @@ class Users::OmniauthCallbacksController < ApplicationController
         name: name,
         username: UserNameSuggester.suggest(name),
         email_valid: true ,
-        auth_provider: auth_token.provider || params[:provider]
+        auth_provider: auth_token.provider || params[:provider] || 'aai'
         # auth_provider: auth_token.provider || params[:provider].try(:capitalize)
       }
       session[:authentication] = {
+        aai: {
+          unique_id: unique_id
+          persistent_id: persistent_id
+        }
         email: @data[:email],
         email_valid: @data[:email_valid],
       }
     end
-
-
 
   end
 
