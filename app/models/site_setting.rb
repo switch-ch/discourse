@@ -160,6 +160,8 @@ class SiteSetting < ActiveRecord::Base
 
   client_setting(:enable_persona_logins, false)
 
+  client_setting(:enable_aai_logins, true)
+
   setting(:enforce_global_nicknames, true)
   setting(:discourse_org_access_key, '')
 
