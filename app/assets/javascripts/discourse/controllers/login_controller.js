@@ -27,6 +27,7 @@ Discourse.LoginController = Discourse.Controller.extend(Discourse.ModalFunctiona
            Discourse.SiteSettings.enable_twitter_logins ||
            Discourse.SiteSettings.enable_yahoo_logins ||
            Discourse.SiteSettings.enable_github_logins ||
+           Discourse.SiteSettings.enable_aai_logins ||
            Discourse.SiteSettings.enable_persona_logins;
   }.property(),
 
@@ -120,6 +121,13 @@ Discourse.LoginController = Discourse.Controller.extend(Discourse.ModalFunctiona
     var left = this.get('lastX') - 400;
     var top = this.get('lastY') - 200;
     return window.open(Discourse.getURL("/auth/github"), "_blank", "menubar=no,status=no,height=400,width=800,left=" + left + ",top=" + top);
+  },
+
+  aaiLogin: function() {
+    this.set('authenticate', 'aai');
+    var left = this.get('lastX') - 400;
+    var top = this.get('lastY') - 200;
+    return window.open(Discourse.getURL("/auth/aai"), "_blank", "menubar=no,status=no,height=400,width=800,left=" + left + ",top=" + top);
   },
 
   personaLogin: function() {
