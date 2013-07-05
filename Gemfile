@@ -30,6 +30,10 @@ gem 'hiredis'
 
 gem 'email_reply_parser', git: 'https://github.com/lawrencepit/email_reply_parser.git'
 
+# deamons needed to run clockwork as a deamon
+# for more information see https://github.com/tomykaira/clockwork
+gem 'daemons'
+
 # note: for image_optim to correctly work you need
 # sudo apt-get install -y advancecomp gifsicle jpegoptim libjpeg-progs optipng pngcrush
 gem 'image_optim'
