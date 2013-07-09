@@ -88,6 +88,12 @@ Discourse::Application.routes.draw do
   get 'email/unsubscribe/:key' => 'email#unsubscribe', as: 'email_unsubscribe'
   post 'email/resubscribe/:key' => 'email#resubscribe', as: 'email_resubscribe'
 
+  namespace :toolboxapi, defaults: {format: 'json'} do
+    namespace :v1 do
+      resources :users
+      resources :site_settings
+    end
+  end
 
   resources :session, id: USERNAME_ROUTE_FORMAT, only: [:create, :destroy] do
     collection do
@@ -137,7 +143,6 @@ Discourse::Application.routes.draw do
   get 'users/:username/send_activation_email' => 'users#send_activation_email', constraints: {username: USERNAME_ROUTE_FORMAT}
 
   resources :uploads
-
 
   get 'posts/by_number/:topic_id/:post_number' => 'posts#by_number'
   resources :posts do
