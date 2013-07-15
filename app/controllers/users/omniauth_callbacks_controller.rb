@@ -9,7 +9,7 @@ class Users::OmniauthCallbacksController < ApplicationController
   layout false
 
   def self.types
-    @types ||= Enum.new(:facebook, :twitter, :google, :yahoo, :github, :persona, :cas)
+    @types ||= Enum.new(:facebook, :twitter, :google, :yahoo, :github, :persona, :cas, :aai)
   end
 
   # need to be able to call this
@@ -40,6 +40,69 @@ class Users::OmniauthCallbacksController < ApplicationController
   def failure
     flash[:error] = I18n.t("login.omniauth_error", strategy: params[:strategy].titleize)
     render layout: 'no_js'
+  end
+
+  def create_or_sign_on_user_using_aai(auth_token)
+    data_info = auth_token[:info]
+    data_extra = auth_token[:extra]
+    persistent_id = auth_token.uid
+    unique_id = data_info.swiss_ep_uid
+    given_name = data_extra.first_name
+    surname = data_extra.surname
+    email = data_info.email
+    home_organization = data_extra.homeOrganization
+
+    # If the auth supplies a name / username, use those. Otherwise start with email.
+    name = data_info.name || email
+    username = email
+
+    aai_user = AaiUserInfo.where(unique_id: unique_id).first
+
+    if aai_user.blank? && user = User.find_by_email(email)
+      # we trust so do an email lookup
+      aai_user = AaiUserInfo.create(user_id: user.id,
+                                    username: user.username,
+                                    persistent_id: persistent_id,
+                                    unique_id: unique_id,
+                                    given_name: given_name,
+                                    surname: surname,
+                                    email: email,
+                                    home_organization: home_organization)
+    end
+
+
+    authenticated = aai_user # if authed before
+
+    if authenticated
+      user = aai_user.user
+
+      # If we have to approve users
+      if Guardian.new(user).can_access_forum?
+        log_on_user(user)
+        @data = {authenticated: true}
+      else
+        @data = {awaiting_approval: true}
+      end
+
+    else
+      @data = {
+        email: email,
+        name: name,
+        username: UserNameSuggester.suggest(name),
+        email_valid: true,
+        # auth_provider: auth_token.provider || params[:provider] || 'aai'
+        auth_provider: auth_token.provider || params[:provider].try(:capitalize)
+      }
+      session[:authentication] = {
+        aai: {
+          unique_id: unique_id,
+          persistent_id: persistent_id
+        },
+        email: @data[:email],
+        email_valid: @data[:email_valid]
+      }
+    end
+
   end
 
   def create_or_sign_on_user_using_twitter(auth_token)

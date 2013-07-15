@@ -89,6 +89,12 @@ Discourse::Application.routes.draw do
   get 'email/unsubscribe/:key' => 'email#unsubscribe', as: 'email_unsubscribe'
   post 'email/resubscribe/:key' => 'email#resubscribe', as: 'email_resubscribe'
 
+  namespace :toolboxapi, defaults: {format: 'json'} do
+    namespace :v1 do
+      resources :users
+      resources :site_settings
+    end
+  end
 
   resources :session, id: USERNAME_ROUTE_FORMAT, only: [:create, :destroy] do
     collection do
@@ -104,8 +110,15 @@ Discourse::Application.routes.draw do
   end
 
   resources :static
+
+  # TODO - This should be dynamic using the env and the groupname
+  # get 'login', to: redirect("https://discourse.test.toolbox.switch.ch/spunten")
+  # get 'login', to: redirect('/auth/aai')
+
   post 'login' => 'static#enter'
   get 'login' => 'static#show', id: 'login'
+  get 'logout',  to: 'session#destroy', as: 'logout'
+
   get 'faq' => 'static#show', id: 'faq'
   get 'tos' => 'static#show', id: 'tos'
   get 'privacy' => 'static#show', id: 'privacy'
@@ -131,7 +144,6 @@ Discourse::Application.routes.draw do
   post 'users/:username/send_activation_email' => 'users#send_activation_email', constraints: {username: USERNAME_ROUTE_FORMAT}
 
   resources :uploads
-
 
   get 'posts/by_number/:topic_id/:post_number' => 'posts#by_number'
   resources :posts do
