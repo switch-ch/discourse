@@ -192,7 +192,7 @@ describe Topic do
       context "secure categories" do
 
         let(:user) { Fabricate(:user) }
-        let(:category) { Fabricate(:category, secure: true) }
+        let(:category) { Fabricate(:category, read_restricted: true) }
 
         before do
           topic.category = category
@@ -234,7 +234,7 @@ describe Topic do
     let(:category) { Fabricate(:category, user: user) }
     let!(:topic) { Fabricate(:topic, user: user, category: category) }
     let!(:p1) { Fabricate(:post, topic: topic, user: user) }
-    let!(:p2) { Fabricate(:post, topic: topic, user: another_user)}
+    let!(:p2) { Fabricate(:post, topic: topic, user: another_user, raw: "Has a link to [evil trout](http://eviltrout.com) which is a cool site.")}
     let!(:p3) { Fabricate(:post, topic: topic, user: user)}
     let!(:p4) { Fabricate(:post, topic: topic, user: user)}
 
@@ -279,6 +279,7 @@ describe Topic do
       before do
         topic.expects(:add_moderator_post)
         TopicUser.update_last_read(user, topic.id, p4.post_number, 0)
+        TopicLink.extract_from(p2)
       end
 
       context "to a new topic" do
@@ -303,6 +304,7 @@ describe Topic do
           p2.reload
           p2.sort_order.should == 1
           p2.post_number.should == 1
+          p2.topic_links.first.topic_id.should == new_topic.id
 
           p4.reload
           p4.post_number.should == 2
@@ -1261,7 +1263,7 @@ describe Topic do
 
   describe 'secured' do
     it 'can remove secure groups' do
-      category = Fabricate(:category, secure: true)
+      category = Fabricate(:category, read_restricted: true)
       topic = Fabricate(:topic, category: category)
 
       Topic.secured(Guardian.new(nil)).count.should == 0
@@ -1278,17 +1280,50 @@ describe Topic do
     let(:category){ Category.new }
 
     it "is true if the category is secure" do
-      category.stubs(:secure).returns(true)
-      Topic.new(:category => category).should be_secure_category
+      category.stubs(:read_restricted).returns(true)
+      Topic.new(:category => category).should be_read_restricted_category
     end
 
     it "is false if the category is not secure" do
-      category.stubs(:secure).returns(false)
-      Topic.new(:category => category).should_not be_secure_category
+      category.stubs(:read_restricted).returns(false)
+      Topic.new(:category => category).should_not be_read_restricted_category
     end
 
     it "is false if there is no category" do
-      Topic.new(:category => nil).should_not be_secure_category
+      Topic.new(:category => nil).should_not be_read_restricted_category
+    end
+  end
+
+  describe 'trash!' do
+    context "its category's topic count" do
+      let(:moderator) { Fabricate(:moderator) }
+      let(:category) { Fabricate(:category) }
+
+      it "subtracts 1 if topic is being deleted" do
+        topic = Fabricate(:topic, category: category)
+        expect { topic.trash!(moderator) }.to change { category.reload.topic_count }.by(-1)
+      end
+
+      it "doesn't subtract 1 if topic is already deleted" do
+        topic = Fabricate(:topic, category: category, deleted_at: 1.day.ago)
+        expect { topic.trash!(moderator) }.to_not change { category.reload.topic_count }
+      end
+    end
+  end
+
+  describe 'recover!' do
+    context "its category's topic count" do
+      let(:category) { Fabricate(:category) }
+
+      it "adds 1 if topic is deleted" do
+        topic = Fabricate(:topic, category: category, deleted_at: 1.day.ago)
+        expect { topic.recover! }.to change { category.reload.topic_count }.by(1)
+      end
+
+      it "doesn't add 1 if topic is not deleted" do
+        topic = Fabricate(:topic, category: category)
+        expect { topic.recover! }.to_not change { category.reload.topic_count }
+      end
     end
   end
 end

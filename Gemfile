@@ -30,6 +30,10 @@ gem 'hiredis'
 
 gem 'email_reply_parser', git: 'https://github.com/lawrencepit/email_reply_parser.git'
 
+# deamons needed to run clockwork as a deamon
+# for more information see https://github.com/tomykaira/clockwork
+gem 'daemons'
+
 # note: for image_optim to correctly work you need
 # sudo apt-get install -y advancecomp gifsicle jpegoptim libjpeg-progs optipng pngcrush
 gem 'image_optim'
@@ -40,6 +44,7 @@ gem 'multi_json'
 gem 'mustache'
 gem 'nokogiri'
 gem 'omniauth'
+gem 'omniauth-aai'
 gem 'omniauth-openid'
 gem 'openid-redis-store'
 gem 'omniauth-facebook'
@@ -66,9 +71,12 @@ gem 'sinatra', require: nil
 gem 'slim'  # required for sidekiq-web
 gem 'strong_parameters' # remove when we upgrade to Rails 4
 gem 'therubyracer', require: 'v8'
-gem 'thin'
+gem 'thin', require: false
 gem 'diffy', require: false
 gem 'highline', require: false
+
+# Added for setting env variables
+gem 'figaro'
 
 # Gem that enables support for plugins. It is required.
 gem 'discourse_plugin', path: 'vendor/gems/discourse_plugin'
@@ -146,8 +154,8 @@ gem 'rack-mini-profiler', '0.1.27', require: false  # require: false #, git: 'gi
 # https://github.com/jodosha/redis-store/pull/183
 gem 'redis-rack-cache', git: 'https://github.com/SamSaffron/redis-rack-cache.git', require: false
 gem 'rack-cache', require: false
-
 gem 'rack-cors', require: false
+gem 'unicorn', require: false
 
 # perftools only works on 1.9 atm
 group :profile do

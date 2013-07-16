@@ -1,6 +1,9 @@
 <div class="modal-body">
   {{#if hasAtLeastOneLoginButton}}
     <div id="login-buttons">
+      {{#if Discourse.SiteSettings.enable_aai_logins}}
+        <button class="btn btn-social google" title="{{i18n login.aai.title}}" {{action aaiLogin "google"}}>{{i18n login.aai.title}}</button>
+      {{/if}}
       {{#if Discourse.SiteSettings.enable_google_logins}}
         <button class="btn btn-social google" title="{{i18n login.google.title}}" {{action openidLogin "google"}}>{{i18n login.google.title}}</button>
       {{/if}}
