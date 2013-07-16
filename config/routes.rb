@@ -49,6 +49,7 @@ Discourse::Application.routes.draw do
       put 'deactivate'
       put 'block'
       put 'unblock'
+      put 'trust_level'
     end
 
     resources :impersonate, constraints: AdminConstraint.new
@@ -88,6 +89,12 @@ Discourse::Application.routes.draw do
   get 'email/unsubscribe/:key' => 'email#unsubscribe', as: 'email_unsubscribe'
   post 'email/resubscribe/:key' => 'email#resubscribe', as: 'email_resubscribe'
 
+  namespace :toolboxapi, defaults: {format: 'json'} do
+    namespace :v1 do
+      resources :users
+      resources :site_settings
+    end
+  end
 
   resources :session, id: USERNAME_ROUTE_FORMAT, only: [:create, :destroy] do
     collection do
@@ -103,8 +110,15 @@ Discourse::Application.routes.draw do
   end
 
   resources :static
+
+  # TODO - This should be dynamic using the env and the groupname
+  # get 'login', to: redirect("https://discourse.test.toolbox.switch.ch/spunten")
+  # get 'login', to: redirect('/auth/aai')
+
   post 'login' => 'static#enter'
   get 'login' => 'static#show', id: 'login'
+  get 'logout',  to: 'session#destroy', as: 'logout'
+
   get 'faq' => 'static#show', id: 'faq'
   get 'tos' => 'static#show', id: 'tos'
   get 'privacy' => 'static#show', id: 'privacy'
@@ -127,10 +141,9 @@ Discourse::Application.routes.draw do
   put 'users/:username/preferences/username' => 'users#username', constraints: {username: USERNAME_ROUTE_FORMAT}
   get 'users/:username/avatar(/:size)' => 'users#avatar', constraints: {username: USERNAME_ROUTE_FORMAT}
   get 'users/:username/invited' => 'users#invited', constraints: {username: USERNAME_ROUTE_FORMAT}
-  get 'users/:username/send_activation_email' => 'users#send_activation_email', constraints: {username: USERNAME_ROUTE_FORMAT}
+  post 'users/:username/send_activation_email' => 'users#send_activation_email', constraints: {username: USERNAME_ROUTE_FORMAT}
 
   resources :uploads
-
 
   get 'posts/by_number/:topic_id/:post_number' => 'posts#by_number'
   resources :posts do
@@ -178,6 +191,10 @@ Discourse::Application.routes.draw do
   get 'popular' => 'list#popular_redirect'
   get 'popular/more' => 'list#popular_redirect'
 
+  [:latest, :hot].each do |filter|
+    get "#{filter}.rss" => "list##{filter}_feed", format: :rss, as: "#{filter}_feed", filter: filter
+  end
+
   [:latest, :hot, :favorited, :read, :posted, :unread, :new].each do |filter|
     get "#{filter}" => "list##{filter}"
     get "#{filter}/more" => "list##{filter}"
@@ -198,6 +215,7 @@ Discourse::Application.routes.draw do
 
   # Topic routes
   get 't/:slug/:topic_id/wordpress' => 'topics#wordpress', constraints: {topic_id: /\d+/}
+  get 't/:slug/:topic_id/moderator-liked' => 'topics#moderator_liked', constraints: {topic_id: /\d+/}
   get 't/:topic_id/wordpress' => 'topics#wordpress', constraints: {topic_id: /\d+/}
   get 't/:slug/:topic_id/best_of' => 'topics#show', defaults: {best_of: true}, constraints: {topic_id: /\d+/, post_number: /\d+/}
   get 't/:topic_id/best_of' => 'topics#show', constraints: {topic_id: /\d+/, post_number: /\d+/}
@@ -211,11 +229,12 @@ Discourse::Application.routes.draw do
   put 't/:topic_id/unmute' => 'topics#unmute', constraints: {topic_id: /\d+/}
   put 't/:topic_id/autoclose' => 'topics#autoclose', constraints: {topic_id: /\d+/}
   put 't/:topic_id/remove-allowed-user' => 'topics#remove_allowed_user', constraints: {topic_id: /\d+/}
-
+  put 't/:topic_id/recover' => 'topics#recover', constraints: {topic_id: /\d+/}
   get 't/:topic_id/:post_number' => 'topics#show', constraints: {topic_id: /\d+/, post_number: /\d+/}
   get 't/:slug/:topic_id.rss' => 'topics#feed', format: :rss, constraints: {topic_id: /\d+/}
   get 't/:slug/:topic_id' => 'topics#show', constraints: {topic_id: /\d+/}
   get 't/:slug/:topic_id/:post_number' => 'topics#show', constraints: {topic_id: /\d+/, post_number: /\d+/}
+  get 't/:topic_id/posts' => 'topics#posts', constraints: {topic_id: /\d+/}
   post 't/:topic_id/timings' => 'topics#timings', constraints: {topic_id: /\d+/}
   post 't/:topic_id/invite' => 'topics#invite', constraints: {topic_id: /\d+/}
   post 't/:topic_id/move-posts' => 'topics#move_posts', constraints: {topic_id: /\d+/}

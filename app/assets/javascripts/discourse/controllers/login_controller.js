@@ -27,11 +27,12 @@ Discourse.LoginController = Discourse.Controller.extend(Discourse.ModalFunctiona
            Discourse.SiteSettings.enable_twitter_logins ||
            Discourse.SiteSettings.enable_yahoo_logins ||
            Discourse.SiteSettings.enable_github_logins ||
+           Discourse.SiteSettings.enable_aai_logins ||
            Discourse.SiteSettings.enable_persona_logins;
   }.property(),
 
   loginButtonText: function() {
-    return this.get('loggingIn') ? Em.String.i18n('login.logging_in') : Em.String.i18n('login.title');
+    return this.get('loggingIn') ? I18n.t('login.logging_in') : I18n.t('login.title');
   }.property('loggingIn'),
 
   loginDisabled: function() {
@@ -69,7 +70,7 @@ Discourse.LoginController = Discourse.Controller.extend(Discourse.ModalFunctiona
 
     }, function(result) {
       // Failed to login
-      loginController.flash(Em.String.i18n('login.error'), 'error');
+      loginController.flash(I18n.t('login.error'), 'error');
       loginController.set('loggingIn', false);
     });
 
@@ -78,7 +79,7 @@ Discourse.LoginController = Discourse.Controller.extend(Discourse.ModalFunctiona
 
   authMessage: (function() {
     if (this.blank('authenticate')) return "";
-    return Em.String.i18n("login." + (this.get('authenticate')) + ".message");
+    return I18n.t("login." + (this.get('authenticate')) + ".message");
   }).property('authenticate'),
 
   twitterLogin: function() {
@@ -122,18 +123,25 @@ Discourse.LoginController = Discourse.Controller.extend(Discourse.ModalFunctiona
     return window.open(Discourse.getURL("/auth/github"), "_blank", "menubar=no,status=no,height=400,width=800,left=" + left + ",top=" + top);
   },
 
+  aaiLogin: function() {
+    this.set('authenticate', 'aai');
+    var left = this.get('lastX') - 400;
+    var top = this.get('lastY') - 200;
+    return window.open(Discourse.getURL("/auth/aai"), "_blank", "menubar=no,status=no,height=400,width=800,left=" + left + ",top=" + top);
+  },
+
   personaLogin: function() {
     navigator.id.request();
   },
 
   authenticationComplete: function(options) {
     if (options.awaiting_approval) {
-      this.flash(Em.String.i18n('login.awaiting_approval'), 'success');
+      this.flash(I18n.t('login.awaiting_approval'), 'success');
       this.set('authenticate', null);
       return;
     }
     if (options.awaiting_activation) {
-      this.flash(Em.String.i18n('login.awaiting_confirmation'), 'success');
+      this.flash(I18n.t('login.awaiting_confirmation'), 'success');
       this.set('authenticate', null);
       return;
     }
