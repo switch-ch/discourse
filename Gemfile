@@ -75,6 +75,9 @@ gem 'thin', require: false
 gem 'diffy', require: false
 gem 'highline', require: false
 
+# Added for setting env variables
+gem 'figaro'
+
 # Gem that enables support for plugins. It is required.
 gem 'discourse_plugin', path: 'vendor/gems/discourse_plugin'
 
