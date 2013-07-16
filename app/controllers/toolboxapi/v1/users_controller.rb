@@ -4,7 +4,7 @@ module Toolboxapi
       respond_to :json
       
       def show
-        respond_with User.find(params[:id])
+        respond_with User.find_by_username_or_email(params[:id])
       end
 
       def index
