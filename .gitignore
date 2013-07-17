@@ -87,6 +87,9 @@ chef/tmp/*
 # .env, local environment variables for use with foreman
 .env
 
+# We dont want bundled gems in our repo
+/vendor/bundle
+
 # exclude our git version file for now
 config/version.rb
 
