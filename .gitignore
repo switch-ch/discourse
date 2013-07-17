@@ -81,6 +81,9 @@ chef/tmp/*
 # .procfile
 .procfile
 
+# Bundled gems we dont want in the repo
+/vendor/bundle
+
 # .env, local environment variables for use with foreman
 .env
 
