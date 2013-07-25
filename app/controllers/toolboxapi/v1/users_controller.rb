@@ -1,7 +1,7 @@
 module Toolboxapi
   module V1
     class UsersController < ApplicationController
-      skip_before_filter :redirect_to_login_if_required, :check_xhr
+      skip_before_filter :redirect_to_login_if_required, :check_xhr, :verify_authenticity_token
 
       respond_to :json
 
