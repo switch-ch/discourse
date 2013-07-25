@@ -2,10 +2,13 @@ module Toolboxapi
   module V1
     class UsersController < ApplicationController
       skip_before_filter :redirect_to_login_if_required, :check_xhr
+
       respond_to :json
 
       def index
-        respond_with User.all
+        respond_with User.pluck(:email)
+        # respond_with User.all
+        # respond_with User.first.email
       end
 
       def show
