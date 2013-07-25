@@ -90,7 +90,7 @@ sv:
               cant_send_pm: "Tyvärr, du kan inte skicka ett privat meddelande till den användaren."
 
   user_profile:
-    no_info_me: "<div class='missing-profile'>Din profils Om Mig-fält är för närvarande tomt, <a href='/users/%{username_lower}/preferences'>skulle du vilja fylla i det?</a></div>"
+    no_info_me: "<div class='missing-profile'>Din profils Om Mig-fält är för närvarande tomt, <a href='/users/%{username_lower}/preferences/about-me'>skulle du vilja fylla i det?</a></div>"
     no_info_other: "<div class='missing-profile'>%{name} har inte skrivit någonting i dess profils Om Mig-fält ännu</div>"
 
   category:
@@ -480,7 +480,7 @@ sv:
     min_body_similar_length: "The minimum length of a post's body before it will be checked for similar topics"
 
     category_colors: "A pipe (|) separated list of hexadecimal color values allowed for categories"
-    max_upload_size_kb: "The maximum size of files we allow users to upload in kB - be sure to configure the limit in nginx (client_max_body_size) / apache or proxy as well."
+    max_image_size_kb: "The maximum size of files we allow users to upload in kB - be sure to configure the limit in nginx (client_max_body_size) / apache or proxy as well."
     max_similar_results: "How many similar topics to show a user while they are composing a new topic"
 
   notification_types:
