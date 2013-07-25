@@ -17,8 +17,9 @@ module Toolboxapi
       end
 
       def create
-        user = User.new_from_params(params)
-        user.save
+        User.create_for_email(params[:email])
+        # user = User.new_from_params(params)
+        # user.save
         render nothing: true
       end
 
