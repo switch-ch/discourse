@@ -51,7 +51,6 @@ class Users::OmniauthCallbacksController < ApplicationController
     surname = data_extra.surname
     email = data_info.email
     home_organization = data_extra.homeOrganization
-
     # If the auth supplies a name / username, use those. Otherwise start with email.
     name = data_info.name || email
     username = email

@@ -7,13 +7,12 @@ require_dependency 'rate_limiter'
 
 class ApplicationController < ActionController::Base
   include CurrentUser
-
   include CanonicalURL::ControllerExtensions
 
   serialization_scope :guardian
 
   protect_from_forgery
-
+ 
   before_filter :inject_preview_style
   before_filter :block_if_maintenance_mode
   before_filter :authorize_mini_profiler
@@ -22,6 +21,7 @@ class ApplicationController < ActionController::Base
   before_filter :check_xhr
   before_filter :set_locale
   before_filter :redirect_to_login_if_required
+  before_filter :prepare_latch
 
   rescue_from Exception do |exception|
     unless [ ActiveRecord::RecordNotFound, ActionController::RoutingError,
@@ -185,6 +185,13 @@ class ApplicationController < ActionController::Base
 
     guardian.ensure_can_see!(user)
     user
+  end
+
+  def prepare_latch
+    # we need the to_s or else URI.encode fails
+    @latch_vo_key = URI.encode request.env['SERVER_NAME'].split('.').first.to_s
+    @latch_unique_id = URI.encode request.env['uniqueID'].to_s
+    @latch_entity_id = URI.encode request.env['Shib-Identity-Provider'].to_s
   end
 
   private

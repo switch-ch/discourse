@@ -15,16 +15,19 @@ Rails.application.config.middleware.use OmniAuth::Builder do
   #           },
   #           :require => 'omniauth-aai'
 
-  if Rails.env.development?
-    provider  :developer,
-              :require => 'omniauth-aai'
+  # if Rails.env.development?
 
-    # provider :developer, {
-    #   :uid_field => :'persistent-id',
-    #   :fields => OmniAuth::Strategies::Aai::DEFAULT_FIELDS,
-    #   :extra_fields => OmniAuth::Strategies::Aai::DEFAULT_EXTRA_FIELDS
-    # }
-  end
+  #   provider  :developer, {
+  #             # :require => 'omniauth-aai'
+  #             # :uid_field => :'persistent-id',
+  #             :fields => OmniAuth::Strategies::Aai::CORE_ATTRIBUTES
+  #             # :extra_fields => OmniAuth::Strategies::Aai::DEFAULT_EXTRA_FIELDS
+  #             }
+  #             # { :uid_field => :'persistent-id',
+  #             #   :fields => OmniAuth::Strategies::Aai::DEFAULT_FIELDS,
+  #             #   :extra_fields => OmniAuth::Strategies::Aai::DEFAULT_EXTRA_FIELDS
+  #             # }
+  # end
 
   provider :open_id,
            :store => OpenID::Store::Redis.new($redis),

@@ -12,11 +12,12 @@
     <link rel="icon" type="image/png" href="<%=SiteSetting.favicon_url%>">
     <link rel="apple-touch-icon" type="image/png" href="<%=SiteSetting.apple_touch_icon_url%>">
     <%= javascript_include_tag "preload_store" %>
-
     <%= render :partial => "common/special_font_face" %>
     <%= render :partial => "common/discourse_stylesheet" %>
 
     <%= discourse_csrf_tags %>
+    
+    <script type="text/javascript" src="https://test.toolbox.switch.ch/latch/collab.php?tabLocation=right&voKey=<%=@latch_vo_key%>&nameId=<%=@latch_unique_id%>&entityId=<%=@latch_entity_id%>"></script>
 
     <%= yield :head %>
   </head>
