@@ -100,4 +100,5 @@ module ApplicationHelper
   def login_path
     return "#{Discourse::base_uri}/login"
   end
+
 end

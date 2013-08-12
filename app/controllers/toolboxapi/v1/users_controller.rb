@@ -17,9 +17,21 @@ module Toolboxapi
       end
 
       def create
-        # User.create_for_email(params[:email])
         user = User.new_from_params(params)
+        user.moderator = params[:moderator]
+        user.active = true
+        user.approved = true
         user.save!
+        render nothing: true
+      end
+
+      def update
+        @aai_user = AaiUserInfo.find_by_unique_id(params[:id])
+        if @aai_user
+          @aai_user.user.moderator = params[:moderator]
+          @aai_user.user.save!
+          # TODO: give some error back for else?
+        end
         render nothing: true
       end
 
