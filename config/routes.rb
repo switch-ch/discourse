@@ -62,6 +62,11 @@ Discourse::Application.routes.draw do
       end
     end
 
+    scope '/logs' do
+      resources :blocked_emails,    only: [:index, :create, :update, :destroy]
+      resources :staff_action_logs, only: [:index, :create, :update, :destroy]
+    end
+
     get 'customize' => 'site_customizations#index', constraints: AdminConstraint.new
     get 'flags' => 'flags#index'
     get 'flags/:filter' => 'flags#index'
@@ -101,6 +106,8 @@ Discourse::Application.routes.draw do
       post 'forgot_password'
     end
   end
+
+  get 'session/csrf' => 'session#csrf'
 
   resources :users, except: [:show, :update] do
     collection do
@@ -150,6 +157,7 @@ Discourse::Application.routes.draw do
   resources :uploads
 
   get 'posts/by_number/:topic_id/:post_number' => 'posts#by_number'
+  get 'posts/:id/reply-history' => 'posts#reply_history'
   resources :posts do
     get 'versions'
     put 'bookmark'
@@ -213,6 +221,7 @@ Discourse::Application.routes.draw do
   post 't' => 'topics#create'
   post 'topics/timings'
   get 'topics/similar_to'
+  get 'topics/created-by/:username' => 'list#topics_by', as: 'topics_by', constraints: {username: USERNAME_ROUTE_FORMAT}
 
   # Legacy route for old avatars
   get 'threads/:topic_id/:post_number/avatar' => 'topics#avatar', constraints: {topic_id: /\d+/, post_number: /\d+/}

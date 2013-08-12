@@ -7,6 +7,9 @@
 **/
 Discourse.Utilities = {
 
+  IMAGE_EXTENSIONS: [".png", ".jpg", ".jpeg", ".gif", ".bmp", ".tif", ".tiff"],
+  IS_AN_IMAGE_REGEXP: /\.(png|jpg|jpeg|gif|bmp|tif|tiff)$/i,
+
   translateSize: function(size) {
     switch (size) {
       case 'tiny': return 20;
@@ -87,7 +90,7 @@ Discourse.Utilities = {
   },
 
   userUrl: function(username) {
-    return Discourse.getURL("/users/" + username);
+    return Discourse.getURL("/users/" + username.toLowerCase());
   },
 
   emailValid: function(email) {
@@ -193,13 +196,13 @@ Discourse.Utilities = {
   validateUploadedFile: function(file, type) {
     // check that the uploaded file is authorized
     if (!Discourse.Utilities.isAuthorizedUpload(file)) {
-      var extensions = Discourse.SiteSettings.authorized_extensions.replace(/\|/g, ", ");
+      var extensions = Discourse.Utilities.authorizedExtensions();
       bootbox.alert(I18n.t('post.errors.upload_not_authorized', { authorized_extensions: extensions }));
       return false;
     }
 
     // ensures that new users can upload a file
-    if (Discourse.User.current('trust_level') === 0 && Discourse.SiteSettings['newuser_max_' + type + 's'] === 0) {
+    if (Discourse.User.currentProp('trust_level') === 0 && Discourse.SiteSettings['newuser_max_' + type + 's'] === 0) {
       bootbox.alert(I18n.t('post.errors.' + type + '_upload_not_allowed_for_new_user'));
       return false;
     }
@@ -249,7 +252,7 @@ Discourse.Utilities = {
     @param {String} path The path
   **/
   isAnImage: function(path) {
-    return path && path.match(/\.(png|jpg|jpeg|gif|bmp|tif|tiff)$/i);
+    return Discourse.Utilities.IS_AN_IMAGE_REGEXP.test(path);
   },
 
   /**
@@ -258,7 +261,11 @@ Discourse.Utilities = {
     @method allowsAttachments
   **/
   allowsAttachments: function() {
-    return _.difference(Discourse.SiteSettings.authorized_extensions.split("|"), [".png", ".jpg", ".jpeg", ".gif", ".bmp", ".tif", ".tiff"]).length > 0;
+    return _.difference(Discourse.SiteSettings.authorized_extensions.split("|"), Discourse.Utilities.IMAGE_EXTENSIONS).length > 0;
+  },
+
+  authorizedExtensions: function() {
+    return Discourse.SiteSettings.authorized_extensions.replace(/\|/g, ", ");
   }
 
 };

@@ -33,7 +33,7 @@ if rails4?
 end
 
 if rails4?
-  gem 'rails', '4.0.0'
+  gem 'rails', :git => 'git://github.com/rails/rails.git', :branch => '4-0-stable'
   gem 'redis-rails', :git => 'git://github.com/SamSaffron/redis-store.git'
   gem 'rails-observers'
   gem 'actionpack-action_caching'
@@ -150,7 +150,8 @@ gem 'discourse_emoji', path: 'vendor/gems/discourse_emoji'
 group :assets do
   gem 'sass'
   gem 'sass-rails'
-  gem 'turbo-sprockets-rails3'
+  # Sam: disabling for now, having issues with our jenkins build
+  # gem 'turbo-sprockets-rails3'
   gem 'uglifier'
 end
 
@@ -160,6 +161,7 @@ group :test do
 end
 
 group :test, :development do
+  gem 'mock_redis'
   gem 'listen', require: false
   gem 'certified', require: false
   if rails4?
@@ -203,7 +205,7 @@ gem 'lru_redux'
 # IMPORTANT: mini profiler monkey patches, so it better be required last
 #  If you want to amend mini profiler to do the monkey patches in the railstie
 #  we are open to it. by deferring require to the initializer we can configure disourse installs without it
-gem 'rack-mini-profiler', '0.1.27', require: false  # require: false #, git: 'git://github.com/SamSaffron/MiniProfiler'
+gem 'rack-mini-profiler', '0.1.28', require: false  # require: false #, git: 'git://github.com/SamSaffron/MiniProfiler'
 
 # used for caching, optional
 # redis-rack-cache is missing a sane expiry policy, it hogs redis

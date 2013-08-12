@@ -1,13 +1,17 @@
+//= require_tree ./discourse/ember
+
 // The rest of the externals
 //= require_tree ./external
 
 //= require ./discourse/helpers/i18n_helpers
+//= require ./discourse/mixins/ajax
 //= require ./discourse
 
 // Pagedown customizations
 //= require ./pagedown_custom.js
 
 // Stuff we need to load first
+//= require ./discourse/mixins/scrolling
 //= require_tree ./discourse/mixins
 //= require ./discourse/components/computed
 //= require ./discourse/views/view

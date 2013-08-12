@@ -1,22 +1,4 @@
 /**
-  The common route stuff for a user's preference
-
-  @class PreferencesRoute
-  @extends Discourse.RestrictedUserRoute
-  @namespace Discourse
-  @module Discourse
-**/
-Discourse.PreferencesRoute = Discourse.RestrictedUserRoute.extend({
-  model: function() {
-    return this.modelFor('user');
-  },
-
-  renderTemplate: function() {
-    this.render('preferences', { into: 'user', outlet: 'userOutlet', controller: 'preferences' });
-  }
-});
-
-/**
   This controller supports actions related to updating one's preferences
 
   @class PreferencesController
@@ -65,8 +47,8 @@ Discourse.PreferencesController = Discourse.ObjectController.extend({
     return model.save().then(function() {
       // model was saved
       preferencesController.set('saving', false);
-      if (Discourse.User.current('id') === model.get('id')) {
-        Discourse.User.current().set('name', model.get('name'));
+      if (Discourse.User.currentProp('id') === model.get('id')) {
+        Discourse.User.currentProp('name', model.get('name'));
       }
 
       preferencesController.set('bio_cooked',

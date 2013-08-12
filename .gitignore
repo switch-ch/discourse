@@ -39,7 +39,10 @@ config/environments/production.rb
 /log/*.log
 /log/*.log.*
 /tmp
+/plugins
 /logfile
+
+/spec/fixtures/plugins/my_plugin/auto_generated
 
 # Ignore Eclipse .project file
 /.project
