@@ -91,7 +91,7 @@ Discourse::Application.routes.draw do
 
   namespace :toolboxapi, defaults: {format: 'json'} do
     namespace :v1 do
-      resources :users
+      resources :users, :constraints => { :id => /[^\/]+/ }
       resources :site_settings
     end
   end

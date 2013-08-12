@@ -1,7 +1,9 @@
 module Toolboxapi
   module V1
     class SiteSettingsController < ApplicationController
-      protect_from_forgery :except => [:update]
+      skip_before_filter :redirect_to_login_if_required, :check_xhr
+      protect_from_forgery except: :update
+
       respond_to :json
 
       def index
