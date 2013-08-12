@@ -57,6 +57,11 @@ else
   gem 'guard-spork', require: false
 end
 
+#gems added by SWITCH
+gem 'omniauth-aai'
+gem 'addressable'
+
+# orginial gems starts here
 gem 'redis'
 gem 'hiredis'
 gem 'em-redis'
@@ -101,7 +106,6 @@ gem 'multi_json'
 gem 'mustache'
 gem 'nokogiri'
 gem 'omniauth'
-gem 'omniauth-aai'
 gem 'omniauth-openid'
 gem 'openid-redis-store'
 gem 'omniauth-facebook'
