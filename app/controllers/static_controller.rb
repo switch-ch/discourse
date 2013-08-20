@@ -32,7 +32,12 @@ class StaticController < ApplicationController
     end
 
     if lookup_context.find_all("#{file}.html").any?
-      render file, layout: !request.xhr?, formats: [:html]
+      # this makes logut impossible but the /login page wont show up either, 19.8.2013
+      server_array = env["SERVER_NAME"].split(".")
+      group = server_array.shift
+      url = "#{server_array.join('.')}/#{group}" 
+      redirect_to url
+      # render file, layout: !request.xhr?, formats: [:html]
       return
     end
 
