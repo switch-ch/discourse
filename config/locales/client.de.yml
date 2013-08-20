@@ -43,12 +43,13 @@ de:
         x_days:
           one:   "1T"
           other: "%{count}T"
-        about_x_months:
-          one:   "1Mon"
-          other: "%{count}Mon"
-        x_months:
-          one:   "1Mon"
-          other: "%{count}Mon"
+        # See https://github.com/discourse/discourse/issues/1356
+        # about_x_months:
+        #   one:   "1Mon"
+        #   other: "%{count}Mon"
+        # x_months:
+        #   one:   "1Mon"
+        #   other: "%{count}Mon"
         about_x_years:
           one:   "1J"
           other: "%{count}J"
