@@ -60,6 +60,7 @@ end
 #gems added by SWITCH
 gem 'omniauth-aai'
 gem 'addressable'
+gem 'mini_portile'
 
 # orginial gems starts here
 gem 'redis'
