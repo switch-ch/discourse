@@ -60,6 +60,8 @@ end
 #gems added by SWITCH
 gem 'omniauth-aai'
 gem 'addressable'
+# without this, nokogiri cannot be installed on production
+gem 'mini_portile'
 
 # orginial gems starts here
 gem 'redis'
