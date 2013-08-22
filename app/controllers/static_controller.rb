@@ -2,6 +2,14 @@ class StaticController < ApplicationController
 
   skip_before_filter :check_xhr, :redirect_to_login_if_required
 
+#  def redirect
+#    # this makes logut impossible but the /login page wont show up either, 19.8.2013
+#    server_array = env["SERVER_NAME"].split(".")
+#    group = server_array.shift
+#    url = "https://#{server_array.join('.')}/" 
+#    redirect_to url
+#  end
+
   def show
 
     map = {
@@ -11,6 +19,10 @@ class StaticController < ApplicationController
     }
 
     page = params[:id]
+
+    if page == 'login_admin'
+      page = 'login'
+    end
 
     if site_setting_key = map[page]
       url = SiteSetting.send(site_setting_key)
@@ -32,12 +44,7 @@ class StaticController < ApplicationController
     end
 
     if lookup_context.find_all("#{file}.html").any?
-      # this makes logut impossible but the /login page wont show up either, 19.8.2013
-      server_array = env["SERVER_NAME"].split(".")
-      group = server_array.shift
-      url = "#{server_array.join('.')}/#{group}" 
-      redirect_to url
-      # render file, layout: !request.xhr?, formats: [:html]
+      render file, layout: !request.xhr?, formats: [:html]
       return
     end
 
