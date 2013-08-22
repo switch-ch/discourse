@@ -16,8 +16,6 @@
     <%= render :partial => "common/discourse_stylesheet" %>
 
     <%= discourse_csrf_tags %>
-    
-    <script type="text/javascript" src="https://test.toolbox.switch.ch/latch/collab.php?tabLocation=right&voKey=<%=@latch_vo_key%>&nameId=<%=@latch_unique_id%>&entityId=<%=@latch_entity_id%>"></script>
 
     <%= yield :head %>
   </head>
@@ -75,5 +73,12 @@
 
     <!-- Discourse Version: <%= Discourse::VERSION::STRING %> -->
     <!-- Git Version: <%= Discourse.git_version %> -->
+
+    <%- if Rails.env.production? %>
+      <script type="text/javascript" src="https://toolbox.switch.ch/latch/collab.php?tabLocation=right&voKey=<%=@latch_vo_key%>&nameId=<%=@latch_unique_id%>&entityId=<%=@latch_entity_id%>"></script>
+    <%- else %>
+      <script type="text/javascript" src="https://test.toolbox.switch.ch/latch/collab.php?tabLocation=right&voKey=<%=@latch_vo_key%>&nameId=<%=@latch_unique_id%>&entityId=<%=@latch_entity_id%>"></script>
+    <% end %>
+
   </body>
 </html>
